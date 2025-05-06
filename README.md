@@ -3,6 +3,10 @@
 ## Objetivo
 Exercitar os conceitos referentes à manipulação, tratamento e limpeza de dados.
 
+## Vídeo de Apresentação (Youtube)
+
+[https://youtu.be/tAFApvJZLHg](https://youtu.be/tAFApvJZLHg)
+
 ## Arquivos
 
 - **Dados**: O arquivo com os dados está localizado em [data/fakeTelegram.BR_2022.csv](data/fakeTelegram.BR_2022.csv).
