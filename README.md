@@ -1,5 +1,11 @@
 # Lista 01 - Tratamento de Dados
 
+>Yanna Torres Gonçalves
+>
+>Matrícula: 587299
+>
+>Mestrado em Ciências da Computação
+
 ## Objetivo
 Exercitar os conceitos referentes à manipulação, tratamento e limpeza de dados.
 
