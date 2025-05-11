@@ -1,25 +1,23 @@
-# CKP9011-ciencia-de-dados
-Repositório com todas as listas da cadeira de Introdução à Ciência de Dados, do Programa de Pós-graduação em Ciências da Computação da UFC.
+# Lista 02 - Extração de Dados
 
-## Estrutura do Repositório
-Cada lista de exercícios está disponível em uma branch diferente. Abaixo, você encontra as branches e a descrição do conteúdo de cada uma delas:
+>Yanna Torres Gonçalves
+>
+>Matrícula: 587299
+>
+>Mestrado em Ciências da Computação
 
-- **[lista-01](https://github.com/yanna-torres/CKP9011-ciencia-de-dados/tree/lista-01)**: Tratamento de Dados.
+## Objetivo
+Exercitar os conceitos referentes à manipulação, tratamento e limpeza de dados.
 
-## Como Acessar as Branches
-Para acessar uma branch específica, use os seguintes comandos:
+## Vídeo de Apresentação (Youtube)
 
-1. Para listar todas as branches:
-   ```bash
-   git branch -a
-   ```
 
-2. Para fazer o checkout em uma branch específica:
-   ```bash
-   git checkout nome-da-branch
-   ```
+## Arquivos
 
-Substitua "nome-da-branch" pelo nome de qualquer uma das branches mencionadas acima.
+- **Dados**: O arquivo com os dados está localizado em .
+- **Notebook**: O notebook com os exercícios está localizado em [lista02.ipynb](lista02.ipynb).
 
-## Contribuições
-Se você tiver sugestões ou melhorias para as listas, sinta-se à vontade para abrir um _pull request_.
+## Como rodar o notebook
+1. Clone o repositório ou baixe os arquivos.
+2. Abra o notebook `lista02.ipynb` em um ambiente Jupyter, também é possível rodar o notebook através do colab.
+3. Execute as células do notebook para resolver os exercícios.
