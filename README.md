@@ -11,6 +11,8 @@ Exercitar os conceitos referentes à manipulação, tratamento e limpeza de dado
 
 ## Vídeo de Apresentação (Youtube)
 
+[https://youtu.be/23xZm2xpZnU](https://youtu.be/23xZm2xpZnU)
+
 
 ## Arquivos
 
