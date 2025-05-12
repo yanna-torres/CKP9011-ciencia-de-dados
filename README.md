@@ -14,7 +14,7 @@ Exercitar os conceitos referentes à manipulação, tratamento e limpeza de dado
 
 ## Arquivos
 
-- **Dados**: O arquivo com os dados está localizado em .
+- **Dados**: O arquivo é o mesmo utilizado na lista 01 e está localizado no [link](https://github.com/yanna-torres/CKP9011-ciencia-de-dados/tree/lista-01/data).
 - **Notebook**: O notebook com os exercícios está localizado em [lista02.ipynb](lista02.ipynb).
 
 ## Como rodar o notebook
