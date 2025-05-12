@@ -5,7 +5,7 @@ Repositório com todas as listas da cadeira de Introdução à Ciência de Dados
 Cada lista de exercícios está disponível em uma branch diferente. Abaixo, você encontra as branches e a descrição do conteúdo de cada uma delas:
 
 - **[lista-01](https://github.com/yanna-torres/CKP9011-ciencia-de-dados/tree/lista-01)**: Tratamento de Dados.
-- **[lista-01](https://github.com/yanna-torres/CKP9011-ciencia-de-dados/tree/lista-02)**: Extração de Dados.
+- **[lista-02](https://github.com/yanna-torres/CKP9011-ciencia-de-dados/tree/lista-02)**: Extração de Dados.
 
 ## Como Acessar as Branches
 Para acessar uma branch específica, use os seguintes comandos:
