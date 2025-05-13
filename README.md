@@ -19,5 +19,5 @@ Exercitar os conceitos referente à análise exploratória de dados.
 
 ## Como rodar o notebook
 1. Clone o repositório ou baixe os arquivos.
-2. Abra o notebook `lista02.ipynb` em um ambiente Jupyter, também é possível rodar o notebook através do colab.
+2. Abra o notebook `lista03.ipynb` em um ambiente Jupyter, também é possível rodar o notebook através do colab.
 3. Execute as células do notebook para resolver os exercícios.
