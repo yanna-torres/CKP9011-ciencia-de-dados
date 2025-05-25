@@ -1,0 +1,321 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "id": "bem", "label": "bem", "shape": "dot"}, {"color": "#97c2fc", "id": "contra", "label": "contra", "shape": "dot"}, {"color": "#97c2fc", "id": "turno", "label": "turno", "shape": "dot"}, {"color": "#97c2fc", "id": "fazer", "label": "fazer", "shape": "dot"}, {"color": "#97c2fc", "id": "presidente", "label": "presidente", "shape": "dot"}, {"color": "#97c2fc", "id": "1", "label": "1", "shape": "dot"}, {"color": "#97c2fc", "id": "13", "label": "13", "shape": "dot"}, {"color": "#97c2fc", "id": "3", "label": "3", "shape": "dot"}, {"color": "#97c2fc", "id": "\ud83c\udde7\ud83c\uddf7", "label": "\ud83c\udde7\ud83c\uddf7", "shape": "dot"}, {"color": "#97c2fc", "id": "22", "label": "22", "shape": "dot"}, {"color": "#97c2fc", "id": "agora", "label": "agora", "shape": "dot"}, {"color": "#97c2fc", "id": "anos", "label": "anos", "shape": "dot"}, {"color": "#97c2fc", "id": "dinheiro", "label": "dinheiro", "shape": "dot"}, {"color": "#97c2fc", "id": "pa\u00eds", "label": "pa\u00eds", "shape": "dot"}, {"color": "#97c2fc", "id": "povo", "label": "povo", "shape": "dot"}, {"color": "#97c2fc", "id": "ter", "label": "ter", "shape": "dot"}, {"color": "#97c2fc", "id": "governo", "label": "governo", "shape": "dot"}, {"color": "#97c2fc", "id": "assim", "label": "assim", "shape": "dot"}, {"color": "#97c2fc", "id": "pra", "label": "pra", "shape": "dot"}, {"color": "#97c2fc", "id": "vamos", "label": "vamos", "shape": "dot"}, {"color": "#97c2fc", "id": "grupo", "label": "grupo", "shape": "dot"}, {"color": "#97c2fc", "id": "grupos", "label": "grupos", "shape": "dot"}, {"color": "#97c2fc", "id": "pessoas", "label": "pessoas", "shape": "dot"}, {"color": "#97c2fc", "id": "todos", "label": "todos", "shape": "dot"}, {"color": "#97c2fc", "id": "nada", "label": "nada", "shape": "dot"}, {"color": "#97c2fc", "id": "tudo", "label": "tudo", "shape": "dot"}, {"color": "#97c2fc", "id": "fraude", "label": "fraude", "shape": "dot"}, {"color": "#97c2fc", "id": "aqui", "label": "aqui", "shape": "dot"}, {"color": "#97c2fc", "id": "come\u00e7ar", "label": "come\u00e7ar", "shape": "dot"}, {"color": "#97c2fc", "id": "comigo", "label": "comigo", "shape": "dot"}, {"color": "#97c2fc", "id": "ganhar", "label": "ganhar", "shape": "dot"}, {"color": "#97c2fc", "id": "pode", "label": "pode", "shape": "dot"}, {"color": "#97c2fc", "id": "sobre", "label": "sobre", "shape": "dot"}, {"color": "#97c2fc", "id": "\u201c", "label": "\u201c", "shape": "dot"}, {"color": "#97c2fc", "id": "\u201d", "label": "\u201d", "shape": "dot"}, {"color": "#97c2fc", "id": "votos", "label": "votos", "shape": "dot"}, {"color": "#97c2fc", "id": "todo", "label": "todo", "shape": "dot"}, {"color": "#97c2fc", "id": "ruas", "label": "ruas", "shape": "dot"}, {"color": "#97c2fc", "id": "and", "label": "and", "shape": "dot"}, {"color": "#97c2fc", "id": "of", "label": "of", "shape": "dot"}, {"color": "#97c2fc", "id": "the", "label": "the", "shape": "dot"}, {"color": "#97c2fc", "id": "to", "label": "to", "shape": "dot"}, {"color": "#97c2fc", "id": "ainda", "label": "ainda", "shape": "dot"}, {"color": "#97c2fc", "id": "pois", "label": "pois", "shape": "dot"}, {"color": "#97c2fc", "id": "hoje", "label": "hoje", "shape": "dot"}, {"color": "#97c2fc", "id": "sempre", "label": "sempre", "shape": "dot"}, {"color": "#97c2fc", "id": "porque", "label": "porque", "shape": "dot"}, {"color": "#97c2fc", "id": "esquerda", "label": "esquerda", "shape": "dot"}, {"color": "#97c2fc", "id": "liberdade", "label": "liberdade", "shape": "dot"}, {"color": "#97c2fc", "id": "poder", "label": "poder", "shape": "dot"}, {"color": "#97c2fc", "id": "gente", "label": "gente", "shape": "dot"}, {"color": "#97c2fc", "id": "in", "label": "in", "shape": "dot"}, {"color": "#97c2fc", "id": "vai", "label": "vai", "shape": "dot"}, {"color": "#97c2fc", "id": "votar", "label": "votar", "shape": "dot"}, {"color": "#97c2fc", "id": "voto", "label": "voto", "shape": "dot"}, {"color": "#97c2fc", "id": "mundo", "label": "mundo", "shape": "dot"}, {"color": "#97c2fc", "id": "this", "label": "this", "shape": "dot"}, {"color": "#97c2fc", "id": "dia", "label": "dia", "shape": "dot"}, {"color": "#97c2fc", "id": "managing", "label": "managing", "shape": "dot"}, {"color": "#97c2fc", "id": "professional", "label": "professional", "shape": "dot"}, {"color": "#97c2fc", "id": "verdade", "label": "verdade", "shape": "dot"}, {"color": "#97c2fc", "id": "grande", "label": "grande", "shape": "dot"}, {"color": "#97c2fc", "id": "\u2014", "label": "\u2014", "shape": "dot"}, {"color": "#97c2fc", "id": "\ud83d\udd38", "label": "\ud83d\udd38", "shape": "dot"}, {"color": "#97c2fc", "id": "elei\u00e7\u00f5es", "label": "elei\u00e7\u00f5es", "shape": "dot"}, {"color": "#97c2fc", "id": "was", "label": "was", "shape": "dot"}, {"color": "#97c2fc", "id": "link", "label": "link", "shape": "dot"}, {"color": "#97c2fc", "id": "groups", "label": "groups", "shape": "dot"}, {"color": "#97c2fc", "id": "tool", "label": "tool", "shape": "dot"}, {"color": "#97c2fc", "id": "milh\u00f5es", "label": "milh\u00f5es", "shape": "dot"}, {"color": "#97c2fc", "id": "decision", "label": "decision", "shape": "dot"}, {"color": "#97c2fc", "id": "following", "label": "following", "shape": "dot"}, {"color": "#97c2fc", "id": "community", "label": "community", "shape": "dot"}, {"color": "#97c2fc", "id": "blocked", "label": "blocked", "shape": "dot"}]);
+                  edges = new vis.DataSet([{"from": "bem", "to": "contra", "value": 1011}, {"from": "bem", "to": "turno", "value": 1112}, {"from": "fazer", "to": "presidente", "value": 1192}, {"from": "1", "to": "13", "value": 1070}, {"from": "1", "to": "3", "value": 3023}, {"from": "1", "to": "\ud83c\udde7\ud83c\uddf7", "value": 1040}, {"from": "22", "to": "\ud83c\udde7\ud83c\uddf7", "value": 1039}, {"from": "agora", "to": "anos", "value": 1111}, {"from": "agora", "to": "bem", "value": 1076}, {"from": "agora", "to": "contra", "value": 1221}, {"from": "agora", "to": "dinheiro", "value": 1192}, {"from": "agora", "to": "pa\u00eds", "value": 1173}, {"from": "agora", "to": "povo", "value": 1400}, {"from": "agora", "to": "ter", "value": 1163}, {"from": "anos", "to": "contra", "value": 1198}, {"from": "anos", "to": "dinheiro", "value": 6984}, {"from": "anos", "to": "governo", "value": 1013}, {"from": "anos", "to": "pa\u00eds", "value": 1169}, {"from": "anos", "to": "povo", "value": 1022}, {"from": "bem", "to": "povo", "value": 1191}, {"from": "bem", "to": "\ud83c\udde7\ud83c\uddf7", "value": 3399}, {"from": "contra", "to": "governo", "value": 1227}, {"from": "contra", "to": "pa\u00eds", "value": 1421}, {"from": "contra", "to": "povo", "value": 1725}, {"from": "contra", "to": "ter", "value": 1094}, {"from": "dinheiro", "to": "ter", "value": 1031}, {"from": "pa\u00eds", "to": "povo", "value": 1545}, {"from": "pa\u00eds", "to": "ter", "value": 1027}, {"from": "povo", "to": "ter", "value": 1287}, {"from": "assim", "to": "contra", "value": 1004}, {"from": "contra", "to": "pra", "value": 1182}, {"from": "contra", "to": "vamos", "value": 1023}, {"from": "pra", "to": "vamos", "value": 1330}, {"from": "grupo", "to": "grupos", "value": 1120}, {"from": "grupo", "to": "pessoas", "value": 2134}, {"from": "grupo", "to": "pra", "value": 1049}, {"from": "grupo", "to": "ter", "value": 1208}, {"from": "grupo", "to": "todos", "value": 2139}, {"from": "grupos", "to": "todos", "value": 1835}, {"from": "nada", "to": "pessoas", "value": 1037}, {"from": "nada", "to": "pra", "value": 1378}, {"from": "nada", "to": "todos", "value": 1518}, {"from": "nada", "to": "tudo", "value": 1434}, {"from": "pessoas", "to": "pra", "value": 1793}, {"from": "pessoas", "to": "ter", "value": 1917}, {"from": "pessoas", "to": "todos", "value": 3236}, {"from": "pessoas", "to": "tudo", "value": 1822}, {"from": "pra", "to": "ter", "value": 1624}, {"from": "pra", "to": "todos", "value": 2152}, {"from": "pra", "to": "tudo", "value": 1876}, {"from": "ter", "to": "todos", "value": 1483}, {"from": "ter", "to": "tudo", "value": 1476}, {"from": "todos", "to": "tudo", "value": 2848}, {"from": "nada", "to": "povo", "value": 1320}, {"from": "pessoas", "to": "povo", "value": 1316}, {"from": "povo", "to": "pra", "value": 1908}, {"from": "povo", "to": "todos", "value": 2047}, {"from": "povo", "to": "tudo", "value": 1702}, {"from": "bem", "to": "grupo", "value": 5554}, {"from": "agora", "to": "nada", "value": 1216}, {"from": "fraude", "to": "turno", "value": 1015}, {"from": "nada", "to": "pa\u00eds", "value": 1001}, {"from": "anos", "to": "aqui", "value": 6794}, {"from": "anos", "to": "come\u00e7ar", "value": 6428}, {"from": "anos", "to": "comigo", "value": 5704}, {"from": "anos", "to": "ganhar", "value": 6466}, {"from": "anos", "to": "pode", "value": 7171}, {"from": "aqui", "to": "come\u00e7ar", "value": 7514}, {"from": "aqui", "to": "comigo", "value": 6297}, {"from": "aqui", "to": "dinheiro", "value": 7781}, {"from": "aqui", "to": "ganhar", "value": 7574}, {"from": "aqui", "to": "pode", "value": 7927}, {"from": "come\u00e7ar", "to": "comigo", "value": 6487}, {"from": "come\u00e7ar", "to": "dinheiro", "value": 7553}, {"from": "come\u00e7ar", "to": "ganhar", "value": 7752}, {"from": "come\u00e7ar", "to": "pode", "value": 7265}, {"from": "comigo", "to": "dinheiro", "value": 6377}, {"from": "comigo", "to": "ganhar", "value": 6373}, {"from": "comigo", "to": "pode", "value": 6297}, {"from": "dinheiro", "to": "ganhar", "value": 8128}, {"from": "dinheiro", "to": "pode", "value": 7766}, {"from": "ganhar", "to": "pode", "value": 7546}, {"from": "pode", "to": "sobre", "value": 1469}, {"from": "\u201c", "to": "\u201d", "value": 8659}, {"from": "agora", "to": "pra", "value": 1530}, {"from": "agora", "to": "vamos", "value": 1037}, {"from": "contra", "to": "\u201c", "value": 1173}, {"from": "contra", "to": "pessoas", "value": 1730}, {"from": "contra", "to": "presidente", "value": 1304}, {"from": "contra", "to": "todos", "value": 2319}, {"from": "pessoas", "to": "presidente", "value": 1127}, {"from": "pra", "to": "presidente", "value": 1529}, {"from": "presidente", "to": "todos", "value": 1640}, {"from": "todos", "to": "votos", "value": 1173}, {"from": "fazer", "to": "povo", "value": 1874}, {"from": "contra", "to": "todo", "value": 1071}, {"from": "povo", "to": "todo", "value": 1223}, {"from": "ruas", "to": "todos", "value": 1087}, {"from": "todos", "to": "vamos", "value": 1924}, {"from": "and", "to": "of", "value": 1896}, {"from": "and", "to": "the", "value": 3042}, {"from": "and", "to": "to", "value": 3362}, {"from": "of", "to": "the", "value": 20479}, {"from": "of", "to": "to", "value": 2213}, {"from": "the", "to": "to", "value": 3862}, {"from": "ainda", "to": "anos", "value": 1038}, {"from": "ainda", "to": "fazer", "value": 1384}, {"from": "ainda", "to": "pois", "value": 1065}, {"from": "ainda", "to": "pra", "value": 1418}, {"from": "ainda", "to": "tudo", "value": 1516}, {"from": "anos", "to": "tudo", "value": 1047}, {"from": "dinheiro", "to": "fazer", "value": 1281}, {"from": "fazer", "to": "pra", "value": 2174}, {"from": "fazer", "to": "tudo", "value": 2051}, {"from": "hoje", "to": "tudo", "value": 1132}, {"from": "sempre", "to": "tudo", "value": 1020}, {"from": "agora", "to": "ainda", "value": 1345}, {"from": "agora", "to": "fazer", "value": 1953}, {"from": "agora", "to": "hoje", "value": 1039}, {"from": "agora", "to": "pessoas", "value": 1466}, {"from": "agora", "to": "porque", "value": 1155}, {"from": "agora", "to": "todo", "value": 1072}, {"from": "agora", "to": "todos", "value": 2384}, {"from": "agora", "to": "tudo", "value": 1702}, {"from": "ainda", "to": "bem", "value": 1023}, {"from": "ainda", "to": "contra", "value": 1335}, {"from": "ainda", "to": "nada", "value": 1038}, {"from": "ainda", "to": "pessoas", "value": 1713}, {"from": "ainda", "to": "porque", "value": 1053}, {"from": "ainda", "to": "povo", "value": 1342}, {"from": "ainda", "to": "todos", "value": 1781}, {"from": "anos", "to": "pessoas", "value": 1119}, {"from": "anos", "to": "todos", "value": 1394}, {"from": "bem", "to": "fazer", "value": 1241}, {"from": "bem", "to": "pessoas", "value": 1703}, {"from": "bem", "to": "todo", "value": 1021}, {"from": "bem", "to": "todos", "value": 2672}, {"from": "bem", "to": "tudo", "value": 1275}, {"from": "contra", "to": "fazer", "value": 1339}, {"from": "contra", "to": "tudo", "value": 1520}, {"from": "contra", "to": "\u201d", "value": 1155}, {"from": "esquerda", "to": "todos", "value": 1011}, {"from": "fazer", "to": "nada", "value": 1970}, {"from": "fazer", "to": "pa\u00eds", "value": 1178}, {"from": "fazer", "to": "pessoas", "value": 1790}, {"from": "fazer", "to": "porque", "value": 1156}, {"from": "fazer", "to": "todo", "value": 1185}, {"from": "fazer", "to": "todos", "value": 2621}, {"from": "hoje", "to": "pessoas", "value": 1351}, {"from": "hoje", "to": "todos", "value": 1495}, {"from": "liberdade", "to": "todos", "value": 1026}, {"from": "nada", "to": "porque", "value": 1025}, {"from": "pa\u00eds", "to": "pessoas", "value": 1429}, {"from": "pa\u00eds", "to": "todo", "value": 1368}, {"from": "pa\u00eds", "to": "todos", "value": 1742}, {"from": "pa\u00eds", "to": "tudo", "value": 1299}, {"from": "pessoas", "to": "porque", "value": 1488}, {"from": "pessoas", "to": "sempre", "value": 1254}, {"from": "pessoas", "to": "todo", "value": 1445}, {"from": "pessoas", "to": "\u201c", "value": 1120}, {"from": "pessoas", "to": "\u201d", "value": 1085}, {"from": "poder", "to": "povo", "value": 1535}, {"from": "poder", "to": "todos", "value": 1078}, {"from": "poder", "to": "tudo", "value": 1052}, {"from": "porque", "to": "povo", "value": 1141}, {"from": "porque", "to": "todos", "value": 1633}, {"from": "porque", "to": "tudo", "value": 1395}, {"from": "sempre", "to": "todos", "value": 1564}, {"from": "todo", "to": "todos", "value": 1845}, {"from": "todo", "to": "tudo", "value": 1305}, {"from": "todos", "to": "\u201c", "value": 1161}, {"from": "todos", "to": "\u201d", "value": 1160}, {"from": "tudo", "to": "\u201c", "value": 1142}, {"from": "tudo", "to": "\u201d", "value": 1099}, {"from": "ainda", "to": "aqui", "value": 1033}, {"from": "ainda", "to": "presidente", "value": 1080}, {"from": "aqui", "to": "pra", "value": 1577}, {"from": "gente", "to": "pra", "value": 1357}, {"from": "gente", "to": "todos", "value": 1090}, {"from": "in", "to": "the", "value": 19633}, {"from": "in", "to": "to", "value": 2234}, {"from": "ainda", "to": "vai", "value": 1386}, {"from": "aqui", "to": "porque", "value": 1194}, {"from": "aqui", "to": "sempre", "value": 1191}, {"from": "aqui", "to": "vai", "value": 1121}, {"from": "poder", "to": "vai", "value": 1028}, {"from": "pois", "to": "vai", "value": 1043}, {"from": "porque", "to": "vai", "value": 1390}, {"from": "vai", "to": "votar", "value": 1005}, {"from": "votar", "to": "voto", "value": 1185}, {"from": "assim", "to": "vai", "value": 1174}, {"from": "mundo", "to": "pessoas", "value": 1478}, {"from": "and", "to": "this", "value": 2225}, {"from": "of", "to": "this", "value": 2195}, {"from": "the", "to": "this", "value": 3243}, {"from": "this", "to": "to", "value": 3399}, {"from": "contra", "to": "dia", "value": 1264}, {"from": "dia", "to": "pessoas", "value": 1892}, {"from": "dia", "to": "sempre", "value": 1122}, {"from": "dia", "to": "todos", "value": 2818}, {"from": "and", "to": "in", "value": 1565}, {"from": "in", "to": "of", "value": 18693}, {"from": "managing", "to": "professional", "value": 14170}, {"from": "in", "to": "this", "value": 1665}, {"from": "fraude", "to": "votos", "value": 1010}, {"from": "hoje", "to": "presidente", "value": 1022}, {"from": "hoje", "to": "sobre", "value": 1117}, {"from": "presidente", "to": "sobre", "value": 1400}, {"from": "fazer", "to": "ter", "value": 1495}, {"from": "fazer", "to": "vai", "value": 2613}, {"from": "ter", "to": "vai", "value": 1975}, {"from": "todos", "to": "turno", "value": 1168}, {"from": "todos", "to": "vai", "value": 2269}, {"from": "todos", "to": "verdade", "value": 1086}, {"from": "tudo", "to": "vai", "value": 2042}, {"from": "agora", "to": "aqui", "value": 1732}, {"from": "agora", "to": "dia", "value": 1441}, {"from": "agora", "to": "pode", "value": 1569}, {"from": "aqui", "to": "dia", "value": 1403}, {"from": "aqui", "to": "grupo", "value": 2322}, {"from": "aqui", "to": "todos", "value": 2252}, {"from": "aqui", "to": "tudo", "value": 1445}, {"from": "assim", "to": "pode", "value": 1120}, {"from": "assim", "to": "todos", "value": 1335}, {"from": "dia", "to": "pode", "value": 1559}, {"from": "dia", "to": "tudo", "value": 1495}, {"from": "dia", "to": "vamos", "value": 1178}, {"from": "pode", "to": "todos", "value": 2289}, {"from": "pode", "to": "tudo", "value": 1487}, {"from": "nada", "to": "vai", "value": 1690}, {"from": "vai", "to": "vamos", "value": 1019}, {"from": "1", "to": "sobre", "value": 1042}, {"from": "3", "to": "todos", "value": 1116}, {"from": "ainda", "to": "dia", "value": 1302}, {"from": "ainda", "to": "sobre", "value": 1437}, {"from": "assim", "to": "povo", "value": 1044}, {"from": "dia", "to": "pois", "value": 1151}, {"from": "dia", "to": "povo", "value": 1097}, {"from": "dia", "to": "sobre", "value": 1574}, {"from": "dia", "to": "todo", "value": 1515}, {"from": "nada", "to": "sobre", "value": 1012}, {"from": "pois", "to": "povo", "value": 1047}, {"from": "pois", "to": "todos", "value": 1476}, {"from": "povo", "to": "sobre", "value": 1012}, {"from": "sobre", "to": "todo", "value": 1122}, {"from": "sobre", "to": "todos", "value": 1984}, {"from": "sobre", "to": "tudo", "value": 1461}, {"from": "anos", "to": "sobre", "value": 1062}, {"from": "assim", "to": "pessoas", "value": 1342}, {"from": "contra", "to": "pois", "value": 1033}, {"from": "contra", "to": "sobre", "value": 1841}, {"from": "dia", "to": "fazer", "value": 1873}, {"from": "fazer", "to": "sobre", "value": 1406}, {"from": "grande", "to": "todos", "value": 1116}, {"from": "pessoas", "to": "pois", "value": 1201}, {"from": "pessoas", "to": "sobre", "value": 1919}, {"from": "3", "to": "poder", "value": 2453}, {"from": "dia", "to": "ter", "value": 1188}, {"from": "porque", "to": "ter", "value": 1076}, {"from": "1", "to": "fazer", "value": 1120}, {"from": "sobre", "to": "ter", "value": 1264}, {"from": "pode", "to": "povo", "value": 1611}, {"from": "ainda", "to": "pode", "value": 1619}, {"from": "ainda", "to": "ter", "value": 1404}, {"from": "pode", "to": "pois", "value": 1143}, {"from": "pode", "to": "ter", "value": 1831}, {"from": "sobre", "to": "verdade", "value": 1044}, {"from": "governo", "to": "sobre", "value": 1095}, {"from": "pa\u00eds", "to": "presidente", "value": 1268}, {"from": "aqui", "to": "sobre", "value": 1624}, {"from": "dia", "to": "presidente", "value": 1087}, {"from": "dia", "to": "pa\u00eds", "value": 1102}, {"from": "aqui", "to": "fazer", "value": 1689}, {"from": "grupo", "to": "\ud83c\udde7\ud83c\uddf7", "value": 3887}, {"from": "todos", "to": "\ud83c\udde7\ud83c\uddf7", "value": 1052}, {"from": "aqui", "to": "pessoas", "value": 2164}, {"from": "aqui", "to": "ter", "value": 1849}, {"from": "pessoas", "to": "\ud83c\udde7\ud83c\uddf7", "value": 1234}, {"from": "presidente", "to": "\u201c", "value": 1246}, {"from": "presidente", "to": "\u201d", "value": 1181}, {"from": "presidente", "to": "turno", "value": 1199}, {"from": "3", "to": "fazer", "value": 1035}, {"from": "dia", "to": "vai", "value": 1659}, {"from": "pa\u00eds", "to": "vai", "value": 1380}, {"from": "povo", "to": "vai", "value": 2425}, {"from": "povo", "to": "presidente", "value": 1456}, {"from": "pessoas", "to": "pode", "value": 2035}, {"from": "pessoas", "to": "vai", "value": 1341}, {"from": "pode", "to": "porque", "value": 1247}, {"from": "pode", "to": "pra", "value": 1416}, {"from": "pode", "to": "vai", "value": 1753}, {"from": "pra", "to": "vai", "value": 2503}, {"from": "sobre", "to": "vai", "value": 1355}, {"from": "pode", "to": "presidente", "value": 1555}, {"from": "turno", "to": "votos", "value": 1618}, {"from": "sobre", "to": "\u201c", "value": 1838}, {"from": "sobre", "to": "\u201d", "value": 1815}, {"from": "governo", "to": "todos", "value": 1028}, {"from": "mundo", "to": "pa\u00eds", "value": 1168}, {"from": "mundo", "to": "todo", "value": 2590}, {"from": "mundo", "to": "todos", "value": 1682}, {"from": "aqui", "to": "bem", "value": 1038}, {"from": "bem", "to": "dia", "value": 1064}, {"from": "bem", "to": "vai", "value": 1007}, {"from": "contra", "to": "vai", "value": 1282}, {"from": "dia", "to": "pra", "value": 1401}, {"from": "gente", "to": "vai", "value": 1105}, {"from": "agora", "to": "mundo", "value": 1015}, {"from": "bem", "to": "sobre", "value": 1107}, {"from": "nada", "to": "pode", "value": 1515}, {"from": "agora", "to": "vai", "value": 1917}, {"from": "hoje", "to": "vai", "value": 1010}, {"from": "todo", "to": "vai", "value": 1107}, {"from": "\u2014", "to": "\ud83d\udd38", "value": 14329}, {"from": "pra", "to": "todo", "value": 1099}, {"from": "agora", "to": "presidente", "value": 1122}, {"from": "dia", "to": "\u201c", "value": 1022}, {"from": "presidente", "to": "tudo", "value": 1103}, {"from": "elei\u00e7\u00f5es", "to": "turno", "value": 1041}, {"from": "pode", "to": "\u201c", "value": 1149}, {"from": "pra", "to": "votar", "value": 1008}, {"from": "bem", "to": "presidente", "value": 1157}, {"from": "fazer", "to": "vamos", "value": 1157}, {"from": "povo", "to": "ruas", "value": 1985}, {"from": "dia", "to": "mundo", "value": 1081}, {"from": "elei\u00e7\u00f5es", "to": "sobre", "value": 1030}, {"from": "mundo", "to": "sobre", "value": 1182}, {"from": "fazer", "to": "pode", "value": 2324}, {"from": "aqui", "to": "mundo", "value": 1026}, {"from": "mundo", "to": "vai", "value": 1094}, {"from": "contra", "to": "pode", "value": 1422}, {"from": "pa\u00eds", "to": "pode", "value": 1203}, {"from": "mundo", "to": "tudo", "value": 1436}, {"from": "the", "to": "was", "value": 17830}, {"from": "presidente", "to": "vai", "value": 1879}, {"from": "presidente", "to": "voto", "value": 1079}, {"from": "elei\u00e7\u00f5es", "to": "presidente", "value": 1054}, {"from": "agora", "to": "sobre", "value": 1666}, {"from": "mundo", "to": "pode", "value": 1014}, {"from": "grupo", "to": "link", "value": 1060}, {"from": "fazer", "to": "mundo", "value": 1364}, {"from": "dia", "to": "hoje", "value": 1403}, {"from": "mundo", "to": "povo", "value": 1034}, {"from": "groups", "to": "managing", "value": 14169}, {"from": "groups", "to": "professional", "value": 14169}, {"from": "groups", "to": "tool", "value": 14169}, {"from": "groups", "to": "\u2014", "value": 14169}, {"from": "groups", "to": "\ud83d\udd38", "value": 14169}, {"from": "managing", "to": "tool", "value": 14169}, {"from": "managing", "to": "\u2014", "value": 14169}, {"from": "managing", "to": "\ud83d\udd38", "value": 14169}, {"from": "professional", "to": "tool", "value": 14169}, {"from": "professional", "to": "\u2014", "value": 14169}, {"from": "professional", "to": "\ud83d\udd38", "value": 14169}, {"from": "tool", "to": "\u2014", "value": 14169}, {"from": "tool", "to": "\ud83d\udd38", "value": 14169}, {"from": "milh\u00f5es", "to": "pessoas", "value": 1001}, {"from": "of", "to": "was", "value": 17732}, {"from": "in", "to": "was", "value": 17723}, {"from": "decision", "to": "the", "value": 17468}, {"from": "following", "to": "in", "value": 17443}, {"from": "following", "to": "of", "value": 17442}, {"from": "following", "to": "the", "value": 17446}, {"from": "community", "to": "of", "value": 17435}, {"from": "community", "to": "the", "value": 17439}, {"from": "decision", "to": "of", "value": 17448}, {"from": "decision", "to": "in", "value": 17447}, {"from": "decision", "to": "following", "value": 17424}, {"from": "decision", "to": "was", "value": 17430}, {"from": "community", "to": "in", "value": 17431}, {"from": "community", "to": "decision", "value": 17423}, {"from": "following", "to": "was", "value": 17427}, {"from": "community", "to": "was", "value": 17423}, {"from": "blocked", "to": "in", "value": 17427}, {"from": "blocked", "to": "of", "value": 17424}, {"from": "blocked", "to": "the", "value": 17426}, {"from": "community", "to": "following", "value": 17423}, {"from": "blocked", "to": "community", "value": 17422}, {"from": "blocked", "to": "decision", "value": 17422}, {"from": "blocked", "to": "following", "value": 17422}, {"from": "blocked", "to": "was", "value": 17422}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"stabilization": {"enabled": true, "iterations": 1000, "updateInterval": 1000}}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
