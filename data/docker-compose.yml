@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: CKP9011
+      POSTGRES_PASSWORD: CKP9011
+      POSTGRES_DB: fakeTelegram_db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./fakeTelegramBR_2022_clean.csv:/docker-entrypoint-initdb.d/fakeTelegramBR_2022_clean.csv:ro
+    command: ["postgres", "-c", "client_encoding=UTF-8"]
+    ports:
+      - "5555:5432"
+    restart: always
+
+volumes:
+  postgres_data:
