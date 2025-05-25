@@ -1,4 +1,4 @@
-# Lista 04 - Análise Exploratória de Dados
+# Lista 03 - Análise de Dados
 
 >Yanna Torres Gonçalves
 >
@@ -7,16 +7,15 @@
 >Mestrado em Ciências da Computação
 
 ## Objetivo
-Exercitar os conceitos referente à análise exploratória de dados
+Exercitar os conceitos referente à análise exploratória de dados.
 
 ## Vídeo de Apresentação (Youtube)
 
 
 ## Arquivos
 
-- **Notebook:** O Notebook desta lista pode ser encontrado em .
-- **Dados:** Os dados desta lista são acessados através de um banco de dados PostegreSQL, através de um container Docker. O arquivo de setup do banco e da imagem podem ser econtrados na pasta [data](data/).
-- **Metabase:**
+- **Dados**: O arquivo com os dados está localizado em .
+- **Notebook**: O notebook com os exercícios está localizado em [lista03.ipynb](lista03.ipynb).
 
 ## Como rodar o notebook
 1. Clone o repositório ou baixe os arquivos.
