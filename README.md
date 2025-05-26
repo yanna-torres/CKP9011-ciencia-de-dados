@@ -11,6 +11,7 @@ Exercitar os conceitos referente à análise exploratória de dados.
 
 ## Vídeo de Apresentação (Youtube)
 
+https://youtu.be/BzkaioOkWKk
 
 ## Arquivos
 
