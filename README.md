@@ -14,7 +14,7 @@ Exercitar os conceitos referente à análise exploratória de dados
 
 ## Resolução
 
-As visualizações criadas com o Metabase podem ser encontradas no arquivo [Lista04_metabase.pdf](Lista04_metabase.pdf)
+As visualizações criadas com o Metabase podem ser encontradas no arquivo [Lista04_metabase.pdf](Lista04_metabase.pdf) e as consultas SQL correspondentes estão em [lista04_queries.md](lista04_queries.md).
 
 As próximas seções contêm as instruções para rodar localmente o banco de dados PostegreSQL e o Metabase usando Docker Compose.
 
