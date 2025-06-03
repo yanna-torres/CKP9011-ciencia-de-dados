@@ -45,7 +45,6 @@ Certifique-se de ter o Docker e o Docker Compose instalados:
     Rode o seguinte comando com Docker Compose:
 
     ```bash
-    cd data
     docker-compose up -d
     ```
 
