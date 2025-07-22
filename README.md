@@ -12,11 +12,10 @@ Exercitar os conceitos referentes a Algoritmos de Agrupamento
 
 ## Vídeo de Apresentação (Youtube)
 
-
+https://youtu.be/8cUb6AdyM14
 
 ## Arquivos
 
-- **Dados**: O arquivo com os dados está localizado em .
 - **Notebook**: O notebook com os exercícios está localizado em [lista09.ipynb](lista09.ipynb).
 
 ## Como rodar o notebook
