@@ -8,6 +8,7 @@ Cada lista de exercícios está disponível em uma branch diferente. Abaixo, voc
 - **[lista-02](https://github.com/yanna-torres/CKP9011-ciencia-de-dados/tree/lista-02)**: Extração de Dados.
 - **[lista-03](https://github.com/yanna-torres/CKP9011-ciencia-de-dados/tree/lista-03)**: Análise de Dados.
 - **[lista-04](https://github.com/yanna-torres/CKP9011-ciencia-de-dados/tree/lista-04)**: Análise de Dados (Metabase).
+- **[lista-09](https://github.com/yanna-torres/CKP9011-ciencia-de-dados/tree/lista-09)**: Agrupamento.
 
 ## Como Acessar as Branches
 Para acessar uma branch específica, use os seguintes comandos:
