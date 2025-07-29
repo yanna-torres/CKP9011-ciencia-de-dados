@@ -12,7 +12,7 @@ Exercitar os conceitos referente à classificação binária
 
 ## Vídeo de Apresentação (Youtube)
 
-
+https://youtu.be/ndrKc0WWd38
 
 ## Arquivos
 
