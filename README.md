@@ -16,7 +16,7 @@ Exercitar os conceitos referente à classificação binária
 
 ## Arquivos
 
-- **Notebook**: O notebook com os exercícios está localizado em [lista06.ipynb](lista06.ipynb).
+- **Notebook**: O notebook com os exercícios está localizado em [lista07.ipynb](lista07.ipynb).
 
 ## Como rodar o notebook
 1. Clone o repositório ou baixe os arquivos.
