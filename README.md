@@ -1,4 +1,4 @@
-# Lista 06 - Classificação Binária
+# Lista 07 - Classificação Multiclasse
 
 >Yanna Torres Gonçalves
 >
