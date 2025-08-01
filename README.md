@@ -12,7 +12,7 @@ Exercitar os conceitos referente à regras de associação.
 
 ## Vídeo de Apresentação (Youtube)
 
-
+https://youtu.be/ANiyu0TUSSM
 
 ## Arquivos
 
